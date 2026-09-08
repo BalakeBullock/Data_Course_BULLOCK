@@ -1,0 +1,23 @@
+getwd()
+setwd(User/crbkb/Data_Course_BULLOCK/Data)
+read.csv( file = '1620_scores.csv')
+obj =read.csv(file = '/Users/crbkb/Data_Course_BULLOCK/Data/1620_scores.csv')
+obj
+csv_files=list.files(path = '/Users/crbkb/Data_Course_BULLOCK/Data/', pattern = 'csv')
+csv_files
+
+length(csv_files)
+df=read.csv(file = 'wingspan_vs_mass.csv')
+head(df)
+tail(df)
+b_files=list.files( pattern= "^b", ignore.case = FALSE, recursive = TRUE)
+
+for (i in b_files){
+  out = readLines(i, n = 1)
+  print(out)
+}
+
+for (f in csv_files) {
+  out = readLines(f, n = 1)
+  print(out)
+}
