@@ -282,6 +282,60 @@ ggplot(aes(x = body_mass_g,
         geom_smooth(method = 'lm')
         
 ggsave()#how work
-        
+#10/01/26####
 
-  
+library(palmerpenguins)
+library(tidyverse)
+library(ggplot2)
+p_data=penguins
+
+hist_body_mass=p_data%>%
+  drop_na()%>%
+  ggplot(aes(
+    x= body_mass_g,
+    fill = sex,))+
+  geom_histogram(alpha = 0.8, position = 'identity', bins = 20)+
+  scale_fill_manual(values= c("female"='orchid', "male"='steelblue'))
+
+ggsave('Hist_of_Body_Mass.PDF',plot=hist_body_mass, width=10, height=8, units = 'in',dpi=500 )    
+
+
+p_data%>%
+  drop_na()%>%
+  ggplot(aes(x=bill_length_mm,
+             fill=island, linetype=island))+
+  geom_density(alpha= 0.3, position = 'dodge')+
+  scale_linetype_manual(values=c('Biscoe'='dashed','Dream'='solid', 'Torgersen'='dotted'))+
+  scale_fill_manual(values= c("Biscoe"='orchid', "Dream"='steelblue','Torgersen'='forestgreen'))
+
+p_data%>%
+  drop_na()%>%
+  group_by(species)%>%
+  summarize(mean_body_mass=mean(body_mass_g),
+            sd_body_mass=(sd(body_mass_g)))%>%
+  ggplot(aes(x=species,
+             y=mean_body_mass,
+             fill= species))+
+  geom_col(alpha=0.8, position = 'identity')+
+  geom_errorbar(aes(ymin = mean_body_mass - sd_body_mass,
+                    ymax = mean_body_mass + sd_body_mass),
+                width = 0.2) +
+  scale_fill_manual(values= c("Adelie"='orchid', "Chinstrap"='steelblue','Gentoo'='forestgreen'))+
+  labs(x= 'Species',
+       y= 'Mean Body Mass',
+       title='Average Body mass of Penguin Species')
+
+
+p_data%>%
+  drop_na()%>%
+  ggplot(aes(y=bill_length_mm,
+             x=body_mass_g,
+             colour = species))+
+  geom_point(alpha=0.8)+
+  facet_wrap(~sex)+#this will split into one group facet_grid splits into two catigories
+  scale_color_manual(values= c("Adelie"='orchid', "Chinstrap"='steelblue','Gentoo'='forestgreen'))+
+  theme_minimal()#this is how to change everything else but the data like the back ground and numbers spacing 
+
+
+#10/06/26####
+
