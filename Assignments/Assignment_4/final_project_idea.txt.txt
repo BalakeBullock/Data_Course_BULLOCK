@@ -1,0 +1,30 @@
+1. Create a plaintext document named “final_project_idea.txt”
+
+2. In it, describe your idea for a data analysis final project
+
+I found a data about different types of dinosaurs and different statistics about them, like where they were found, what type(carnivore herbivore, omnivore, pterosaur, therapod,) 
+
+3. Also, Describe the sort of data you will use, potential sources, and what the data might look like
+This data i found on the Kaggle and it has a data set called Jurassic park- the exhaustive dinosaur dataset. This data has a lot of categorical data and I want to see how many different dinosaurs are on each continents and where more of the herbivores or carnivores are on in each
+
+4. (If you already have data, skip this task) Create fake data that simulates what your final project data set might look like. Preferably a csv file
+
+5. Generate a plot (using ggplot) using either your real or fake data that shows at least one expected result)
+There is a PDF of this graph in the assignment too
+
+Dino=read.csv('Assignments/Assignment_4/Dinosaur data for final.csv')
+view(Dino)
+
+unique(Dino$lived_in)
+Dino_graph=Dino%>%
+  drop_na()%>%
+  ggplot(aes(x=type,
+             fill=lived_in))+
+  geom_bar(position = 'dodge')+
+  labs(title= 'Number of Dinosaus of a Specific Type',
+       x= 'Type',
+       y= "Number of Dinosuars",
+       fill= 'Country')+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave('Assignments/Assignment_4/Example Plot For Assignment 4.PDF',plot=Dino_graph )

@@ -287,6 +287,7 @@ ggsave()#how work
 library(palmerpenguins)
 library(tidyverse)
 library(ggplot2)
+library(GGally)
 p_data=penguins
 
 hist_body_mass=p_data%>%
@@ -300,7 +301,7 @@ hist_body_mass=p_data%>%
 ggsave('Hist_of_Body_Mass.PDF',plot=hist_body_mass, width=10, height=8, units = 'in',dpi=500 )    
 
 
-p_data%>%
+p3=p_data%>%
   drop_na()%>%
   ggplot(aes(x=bill_length_mm,
              fill=island, linetype=island))+
@@ -339,3 +340,173 @@ p_data%>%
 
 #10/06/26####
 
+library(palmerpenguins)
+library(tidyverse)
+library(ggplot2)
+library(ggimage)
+library(patchwork)
+library(ggmap)
+library(leaflet)
+p_data=penguins
+
+p1=p_data%>%
+  drop_na()%>%
+  ggplot(aes(y=flipper_length_mm,
+         x=island, 
+         color=island,
+         fill=island))+
+  geom_violin(alpha=0.3 )+
+  geom_jitter( color='chartreuse4')+
+  geom_boxplot(alpha=0.5)+
+  scale_fill_manual(values= c("Biscoe"='orchid', "Dream"='steelblue','Torgersen'='palegreen'))+
+  scale_color_manual(values= c("Biscoe"='black', "Dream"='black','Torgersen'='black'))+
+  labs(title = 'Flipper Length of Penguins on Different Islands',
+       x="Island",
+       y='Flipper Length (mm)')+
+  theme(plot.title = element_text(hjust = 0.5))+#this goes from 0-0.5-1
+  theme(axis.title.x = element_text(angle = 180, size=25, face = 'bold'))
+
+p2=p_data%>%
+  drop_na()%>%
+  group_by(species)%>%
+  summarize(mean_body_mass=mean(body_mass_g),
+            sd_body_mass=(sd(body_mass_g)))%>%
+  ggplot(aes(x=species,
+             y=mean_body_mass,
+             fill= species))+
+  geom_col(alpha=0.8, position = 'identity')+
+  geom_errorbar(aes(ymin = mean_body_mass - sd_body_mass,
+                    ymax = mean_body_mass + sd_body_mass),
+                width = 0.2) +
+  scale_fill_manual(values= c("Adelie"='orchid', "Chinstrap"='steelblue','Gentoo'='forestgreen'))+
+  labs(x= 'Species',
+       y= 'Mean Body Mass',
+       title='Average Body mass of Penguin Species')
+
+p3=p_data%>%
+  drop_na()%>%
+  ggplot(aes(x=bill_length_mm,
+             fill=island, linetype=island))+
+  geom_density(alpha= 0.3, position = 'dodge')+
+  scale_linetype_manual(values=c('Biscoe'='dashed','Dream'='solid', 'Torgersen'='dotted'))+
+  scale_fill_manual(values= c("Biscoe"='orchid', "Dream"='steelblue','Torgersen'='forestgreen'))
+
+#this is patch work
+p1+p2+p3
+combined_plot=(p1+p2)/p3 +
+  plot_annotation(
+    title ='Name',
+    subtitle='Other Name',
+      caption='This is pretty cool',
+      tag_levels = 'a','b','c'
+  )
+combined_plot
+
+
+10/6/2026
+Sys.time()#this is the standard for most computer 
+dat=as.Date('10/6/2026',format = '%m/%d/%Y')#capital y is for 4 digit year and lower case y is for 2 digit years
+
+
+
+DD=read.delim('Data/DatasaurusDozen.tsv')
+DD%>%
+  drop_na()%>%
+  ggplot(aes())
+
+#test#####################################################
+
+p1=p_data%>%
+  drop_na()%>%
+  ggplot(aes(y=flipper_length_mm,
+             x=island, 
+             color=island,
+             fill=island))+
+  geom_violin(alpha=0.3 )+
+  geom_image(image = 'Graphics/stunning-penguin-line-art-perfect-for-your-creative-projects-vector.jpg',
+             position = position_jitter(width = 0.15, seed = 1),
+             size = 0.04)+
+  geom_boxplot(alpha=0.5)+
+  scale_fill_manual(values= c("Biscoe"='orchid', "Dream"='steelblue','Torgersen'='palegreen'))+
+  scale_color_manual(values= c("Biscoe"='black', "Dream"='black','Torgersen'='black'))+
+  labs(title = 'Flipper Length of Penguins on Different Islands',
+       x="Island",
+       y='Flipper Length (mm)')+
+  theme(plot.title = element_text(hjust = 0.5))+#this goes from 0-0.5-1
+  theme(axis.title.x = element_text(angle = 180, size=25, face = 'bold'))
+p1  
+
+
+#10/08/26####
+
+p_data%>%
+  drop_na()%>%
+  group_by(sex)%>%
+  group 
+  ggplot(aes(x=species,
+             y=mean(body_mass_g))+
+  geom_col()
+  
+  
+p_data%>%
+  drop_na()%>%
+  ggplot(aes(x=body_mass_g,
+             y=bill_length_mm))
+
+
+DD=read.delim('Data/DatasaurusDozen.tsv')
+
+view(DD)
+unique(DD$dataset)
+
+DD%>%
+  drop_na()%>%
+  group_by(dataset)%>%
+  summarize(mean_x=mean(x),
+            mean_y=mean(y),
+            sd_x=sd(x),
+            sd_y=sd(y),)
+DD%>%
+  drop_na()%>%
+  group_by(dataset)%>%
+  ggplot(aes(x=x,
+             y=y))+
+  geom_point()+
+  facet_wrap(~dataset)
+p_data%>%
+  drop_na()%>%
+ ggpairs()
+ 
+
+p_data%>%
+  drop_na()%>%
+  group_by((sex))%>%
+  ggplot(aes(x=bill_depth_mm,
+             y=body_mass_g,
+             color=sex))+
+  geom_point(alpha= 0.8, size = 4)+
+  facet_wrap(~species, scales = 'fixed')+
+  labs(x='Bill depth (mm)',
+       y= ' Body dass (g)',
+       color='Sex')+
+  theme_minimal()+
+  theme(axis.title = element_text(face='bold'),
+        axis.text = element_text(face='bold'),
+        legend.text = element_text(face = 'bold'),
+        legend.title = element_text(face = 'bold'),
+        strip.text= element_text(face='bold'),
+        panel.border = element_rect(color='darkgrey',linewidth = 1, fill=NA)
+          )+
+  scale_color_manual(values = c('male'='chartreuse','female'='mediumpurple4'))
+
+library(gapminder)
+library(gganimate)
+library(palmerpenguins)
+library(tidyverse)
+library(ggplot2)
+library(ggimage)
+library(patchwork)
+library(ggmap)
+library(leaflet)
+library()
+p_data=penguins
