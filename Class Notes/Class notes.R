@@ -499,8 +499,12 @@ p_data%>%
           )+
   scale_color_manual(values = c('male'='chartreuse','female'='mediumpurple4'))
 
+#10/13/26####
+
 library(gapminder)
 library(gganimate)
+library(gifski)
+library(av)
 library(palmerpenguins)
 library(tidyverse)
 library(ggplot2)
@@ -508,5 +512,176 @@ library(ggimage)
 library(patchwork)
 library(ggmap)
 library(leaflet)
-library()
+
 p_data=penguins
+
+gap=gapminder
+
+gap%>%
+  drop_na()%>%
+  group_by(continent)%>%
+  summarize(avglife=mean(lifeExp))%>%
+  ggplot(aes(x=continent,
+             y=avglife,
+             fill=continent))+
+  geom_col()+
+  theme_minimal()+
+  labs(title = 'Average life expectancy of each continent',
+       x = "Continent",
+       y= 'Average Life Expectancy',
+       fill='Continent')+
+  theme(plot.title=element_text(hjust = 0.5))
+
+gap%>%
+  drop_na()%>%
+  ggplot(aes(x=pop,
+             y=lifeExp,
+             color=continent))+
+  geom_point()+
+  theme_minimal()+
+  labs(title = 'Average life expectancy of each continent',
+       x = "Continent",
+       y= 'Average Life Expectancy',
+       fill='Continent')+
+  theme(plot.title=element_text(hjust = 0.5))
+
+
+unique(gap$country)continentunique(gap$country)  
+unique(gap$continent)
+
+
+gap%>%
+  ggplot(aes(x=lifeExp,
+             y=gdpPercap,
+             color =continent))+
+  geom_point(aes(size=pop))+
+  facet_wrap(~continent)+
+  labs(title='Year:{frame_time}')+
+  transition_time(time=year)
+
+gap%>%
+  ggplot(aes(x=lifeExp,
+             y=gdpPercap,
+             color =continent))+
+    geom_point(aes(size=pop))+
+    facet_wrap(~continent)+
+    labs(title='Year:{frame_time}')+
+    transition_time(time=year)+
+    geom_text(aes(label = country), vjust=-1.5, size=1.5, colour = 'black')
+
+anim_save('my first animation.gif',animation=animation)
+?transition_time
+
+Dino=read.csv('Assignments/Assignment_4/Dinosaur data for final.csv')
+view(Dino)
+
+unique(Dino$lived_in)
+Dino_graph=Dino%>%
+  drop_na()%>%
+  ggplot(aes(x=type,
+             fill=lived_in))+
+  geom_bar(position = 'dodge')+
+  labs(title= 'Number of Dinosaus of a Specific Type',
+       x= 'Type',
+       y= "Number of Dinosuars",
+       fill= 'Country')+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave('Assignments/Assignment_4/Example Plot For Assignment 4.PDF',plot=Dino_graph )
+
+#10/20/26####
+
+wideboy=read.csv('Data/wide_income_rent.csv')  
+view(wideboy)
+good_wide_boy%>%
+  ggplot(aes(x=v1,
+             y=v2))
+good_wide_boy=t(wideboy)
+
+
+##how to transpose stuff
+
+df= data.frame(
+  id=c(1,2,3,4,5),
+  height=c(120,130,145,155,170),
+  weight=c(34,55,70,80,100)
+)
+
+
+df%>%
+   pivot_longer(cols=c(height, weight), names_to = 'type', values_to = 'measurement')
+wideboy%>%
+  pivot_longer(cols ="Alabama","Alaska",             
+                "Arizona","Arkansas", "California"          
+               "Colorado", "Connecticut","Delaware"            
+               "District.of.Columbia","Florida",:"Georgia"             
+               "Hawaii","Idaho","Illinois"            
+               "Indiana", "Iowa", "Kansas"              
+               "Kentucky"     ,        "Louisiana"        ,    "Maine"        ,       
+               "Maryland"      ,       "Massachusetts"    ,    "Michigan"      ,      
+               "Minnesota"      ,      "Mississippi"       ,   "Missouri"       ,     
+               "Montana"         ,     "Nebraska"          ,   "Nevada"          ,    
+               "New.Hampshire"    ,    "New.Jersey"        ,   "New.Mexico"     ,     
+               "New.York"          ,   "North.Carolina"    ,   "North.Dakota"    ,    
+               "Ohio"               ,  "Oklahoma"         ,    "Oregon"           ,   
+               "Pennsylvania"        , "Rhode.Island"    ,     "South.Carolina"   ,   
+               "South.Dakota"        , "Tennessee"      ,      "Texas"            ,   
+               "Utah"                , "Vermont"       ,       "Virginia"         ,   
+               "Washington"          , "West.Virginia",        "Wisconsin"        ,   
+                "Wyoming"             , "Puerto.Rico" )
+
+names(wideboy)
+good_wide_boy=wideboy%>%
+  pivot_longer(cols =-variable, names_to = 'States')%>%
+  pivot_wider(names_from = variable, values_from = value)
+
+good_wide_boy%>%
+  ggplot(aes(x=income,
+             y=rent))+
+  geom_point()
+
+
+df2=table2
+df2%>%
+  pivot_wider(names_from = type,values_from = count)
+
+df3=table3
+df3%>%
+  separate(rate, into=c('cases','pop'), convert = T) #convert changes it into a intigers
+df4a=table4a
+df4b=table4b
+
+merge()
+join_by()
+dfab=full_join(df4a,df4b)
+dfab%>%
+  pivot_longer(cols=c('1999','2000'), names_to = 'years', values_to = 'income')
+
+########UGLY PLOT##########
+shrek2=read.csv('green_ogre_animated.csv')
+shrek2%>%
+  ggplot(aes(x=x,
+             y=y,
+             color=shade))+
+  geom_point(size = 0.6) +
+  scale_color_gradient(c("#8b0000", "#ff0000", "#ff7a00", "#ffee00", "#ffffff")) +
+  coord_fixed() +
+  theme_void() +
+  theme(plot.background = element_rect(fill = "#ff4500"))+
+  transition_manual(frame)+
+  labs(x='ljlzhfasofaoihfahf',
+       y='asjbjhaljasbajnbaojhvhoihaaosjdhdf',
+       color='ljk;hksdfjh;sdfjlsdaf')
+
+
+shrek2%>%
+  ggplot(aes(x=x,
+             y=y,
+             color=shade))+
+  geom_point(size = 0.6) +
+  scale_color_gradient(c("#8b0000", "#ff0000", "#ff7a00", "#ffee00", "#ffffff")) +
+  coord_fixed() +
+  theme(plot.background = element_rect(fill = "#ff4500"))+
+  labs(x='ljlzhfasofaoihfahf',
+       y='asjbjhaljasbajnbaojhvhoihaaosjdhdf',
+       color='ljk;hksdfjh;sdfjlsdaf')
