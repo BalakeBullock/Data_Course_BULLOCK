@@ -512,6 +512,9 @@ library(ggimage)
 library(patchwork)
 library(ggmap)
 library(leaflet)
+library(extrafont)
+font_import(prompt = FALSE)
+loadfonts(device = "win")
 
 p_data=penguins
 
@@ -642,8 +645,10 @@ good_wide_boy%>%
 
 
 df2=table2
+view(df2)
 df2%>%
   pivot_wider(names_from = type,values_from = count)
+
 
 df3=table3
 df3%>%
@@ -666,22 +671,150 @@ shrek2%>%
   geom_point(size = 0.6) +
   scale_color_gradient(c("#8b0000", "#ff0000", "#ff7a00", "#ffee00", "#ffffff")) +
   coord_fixed() +
-  theme_void() +
+  theme_minimal()+
   theme(plot.background = element_rect(fill = "#ff4500"))+
   transition_manual(frame)+
-  labs(x='ljlzhfasofaoihfahf',
-       y='asjbjhaljasbajnbaojhvhoihaaosjdhdf',
-       color='ljk;hksdfjh;sdfjlsdaf')
+  labs(x='ljlzhf',
+       y='asjbjha',
+       color='ljk;hk',
+       title = 'GOblErrrRRRrRrRrrRRrr')+
+  theme(axis.title.x = element_text(color = 'aquamarine', angle = 199, family = 'Comic Sans MS', size=25))+
+  theme(axis.title.y = element_text(color = 'chartreuse', angle = 37, family = 'Comic Sans MS', size=20))+
+  theme(title = element_text(color = '#CFFF04', angle = 180, base.family = 'Comic Sans MS', size=30, vjust = 1))+
+  theme(panel.grid.major.y = element_line(color = '#2A52BE') )+
+  theme(panel.grid.major.x = element_line(color = '#FF6EC7') )
+
+anim_save('Assignments/Assignment_5/Ugly_Plot_BULLOCK.gif')
 
 
-shrek2%>%
-  ggplot(aes(x=x,
-             y=y,
-             color=shade))+
-  geom_point(size = 0.6) +
-  scale_color_gradient(c("#8b0000", "#ff0000", "#ff7a00", "#ffee00", "#ffffff")) +
-  coord_fixed() +
-  theme(plot.background = element_rect(fill = "#ff4500"))+
-  labs(x='ljlzhfasofaoihfahf',
-       y='asjbjhaljasbajnbaojhvhoihaaosjdhdf',
-       color='ljk;hksdfjh;sdfjlsdaf')
+
+#10/22/26####
+df4a=table4a
+view(df4a)
+df4b=table4b
+view(df4b)
+
+df4ag=df4a%>%
+  pivot_longer(cols = -country, names_to = 'year')%>%
+  rename('cases'= 'value')
+  
+df4bg=df4b%>%
+  pivot_longer(cols = -country, names_to = 'year')%>%
+  rename('population'= 'value')
+
+full_join(df4ag,df4bg)
+
+df5=table5
+view(df5)
+df5%>%
+  separate(rate, into = c('case','population'),convert = T)%>%
+  mutate(year=paste0(df5$century,df5$year)%>%
+  as.numeric())%>%
+  select(-century)
+library(readxl) 
+library(janitor)
+df=read_xlsx(
+  sheet=3,#this is how you skip sheets in xl
+  skip=17,#this is how you skil rows
+  range=E13:F16)#this will select the specific area that you want
+
+#janitor
+make_clean_names('# of bacteria')#this will clean specific names
+clean_names()#of the whole sheet
+read_xlsx('Data/messy_bp.xlsx')
+
+
+#10/27/26####
+library(readxl) 
+library(gapminder)
+library(gganimate)
+library(gifski)
+library(av)
+library(palmerpenguins)
+library(tidyverse)
+library(ggplot2)
+library(ggimage)
+library(patchwork)
+library(ggmap)
+library(leaflet)
+library(extrafont)
+library(janitor)
+
+
+messy_bp=read_xlsx('Data/messy_bp.xlsx',
+                   skip=3)
+# combine month day year.
+
+Clean_BP=messy_bp%>%
+  mutate(Date_of_Birth=paste(`Month of birth`,`Day birth`,`Year birth`, sep='-'))%>%
+  select(-`Month of birth`,-`Day birth`,-`Year birth`)%>%
+  select(-starts_with('HR'))%>%
+  pivot_longer(cols = starts_with('BP'),
+               names_to = 'visit',
+               values_to = 'BP')%>%
+  mutate(visit = case_when(visit== 'BP...8'~'1',
+                           visit== 'BP...10'~'2',
+                           visit== 'BP...12'~'3'))%>%
+ separate(BP, into = c('Systolic', 'Diastolic'), convert = T)
+
+
+
+
+Clean_HR=messy_bp%>%
+  mutate(Date_of_Birth=paste(`Month of birth`,`Day birth`,`Year birth`, sep='-'))%>%
+  select(-`Month of birth`,-`Day birth`,-`Year birth`)%>%
+  select(-starts_with('BP'))%>%
+  pivot_longer(cols=starts_with('HR'),
+               names_to= 'visit',
+               values_to = 'HR')%>%
+  mutate(visit = case_when(visit== 'HR...9'~'1',
+                           visit== 'HR...11'~'2',
+                           visit== 'HR...13'~'3'))
+full_Clean_BP=full_join(Clean_BP,Clean_HR)
+
+full_Clean_BP%>%
+  ggplot(aes(x=visit,
+             y= HR,
+             color= Race,
+             group=pat_id))+
+  geom_path()+
+  facet_wrap(~Race)
+
+
+#10/29/26####
+library(skimr)
+BM=read.csv('Data/Bird_Measurements.csv')
+view(BM)
+BM_keep=skim(BM)
+KEEP=BM_keep%>%
+  filter(complete_rate>=.67)%>%
+  pluck('skim_variable')
+cleanish=BM%>%
+  select(KEEP, F_tarsus)
+
+F_cleanish=cleanish%>%
+  select(-starts_with('M_'))%>%
+  mutate(Sex='Female')%>%
+  rename(Body_Mass=F_mass, Wing=F_wing, Tarsus=F_tarsus, Bill=F_bill)
+  
+  
+M_cleanish=cleanish%>%
+  select(-starts_with('F_'),)%>%
+  mutate(Sex='Male')%>%
+  rename(Body_Mass=M_mass, Wing=M_wing, Tarsus=M_tarsus, Bill=M_bill)
+
+full_cleanish=full_join(M_cleanish, F_cleanish)
+full_cleanish%>%
+  ggplot(aes(x=Egg_mass,
+             y=Body_Mass,
+             color=Sex))+
+  geom_point()+
+  geom_smooth(method="lm", formula = y~poly(x,2))+
+  scale_x_continuous(limits = c(0,600))
+
+
+penguins%>%
+  ggplot(aes(x=body_mass_g,
+             fill=species))+
+  geom_density(alpha=0.5)
+  
