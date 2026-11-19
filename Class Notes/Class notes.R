@@ -643,9 +643,10 @@ good_wide_boy%>%
              y=rent))+
   geom_point()
 
-
+table2
 df2=table2
 view(df2)
+
 df2%>%
   pivot_wider(names_from = type,values_from = count)
 
@@ -739,8 +740,8 @@ library(ggmap)
 library(leaflet)
 library(extrafont)
 library(janitor)
-
-
+library(skimr)
+library(easystats)
 messy_bp=read_xlsx('Data/messy_bp.xlsx',
                    skip=3)
 # combine month day year.
@@ -818,3 +819,96 @@ penguins%>%
              fill=species))+
   geom_density(alpha=0.5)
   
+#11/05/26#####
+
+penguins%>%
+  drop_na()%>%
+  ggplot(aes(x=body_mass_g,
+             fill=sex))+
+  geom_density(alpha=0.5)
+t.test(penguins$body_mass_g~penguins$sex)
+summary(aov(formula = body_mass_g~species, data=penguins))#this will tell you what you want aobut three or more means but it doens't tell you how much
+mod=glm(formula = body_mass_g~species, data=penguins)#this will give you better results than anova tests
+
+penguins%>%
+  drop_na(body_mass_g)%>%
+  group_by(species)%>%
+  summarize(mean=mean(body_mass_g))
+
+
+relevel()#helps reorder the data
+penguins$species=relevel(penguins$species,ref='Gentoo')#this now starts with gentoo instead of adelie
+report(glm(formula = body_mass_g~species, data=penguins))
+performance(glm(formula = body_mass_g~species, data=penguins))
+check_model(glm(formula = body_mass_g~species, data=penguins))
+mod$model$body_mass_g
+mod$effects
+mod$coefficients
+mod$fitted.values
+
+mpg
+car=mpg
+view(car
+     )
+mod2=glm(formula=cty~displ, data=car)
+summary(mod2)
+report(mod2)
+check_model(mod2)
+
+car%>%
+  ggplot(aes(x=displ,
+             y=cty))+
+  geom_smooth(method='lm')+
+  geom_point()+
+  annotate(geom='text',
+           x=6,y=30, label='R^2=0.64')
+
+#practice for stuff I missed####
+
+glm(data = mpg,
+    formula = x + y + z + x:y + x*y)
+
+
+mpg
+
+mod1 = glm(data = mpg,
+           formula = displ + cyl)
+
+mod_h = glm(data = mpg,
+            formula = cty ~ displ + drv + cyl)
+
+mod_hm = glm(data = mpg,
+             formula = cty ~ displ + trans)
+
+summary(mod_hm)
+
+mod1 = glm(data = mpg, formula = cty ~ displ)
+mod2 = glm(data = mpg, formula = cty ~ displ + cyl)
+mod3 = glm(data = mpg, formula = cty ~ displ*cyl)
+
+summary(mod3)
+
+
+mpg %>% 
+  ggplot(aes(x = displ, y = cty)) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+
+mpg %>% 
+  ggplot(aes(x = displ, y = cty, color = factor(cyl))) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+
+mpg %>% 
+  ggplot(aes(x = displ, y = cty, color = cyl)) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+#11/06/26####
+
+install.packages('devtools')
+library(devtools)
+devtools::install_github("nstrayer/datadrivencv")
+
