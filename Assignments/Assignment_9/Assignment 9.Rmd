@@ -1,0 +1,133 @@
+---
+title: "Assigment 9"
+author: "Blake Bullock"
+date: "2026-11-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Analysis
+
+Down below are some of the graphs that were generated to start off the analysis. 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(readxl) 
+library(gapminder)
+library(gganimate)
+library(gifski)
+library(av)
+library(palmerpenguins)
+library(tidyverse)
+library(ggplot2)
+library(ggimage)
+library(patchwork)
+library(ggmap)
+library(leaflet)
+library(extrafont)
+library(janitor)
+library(skimr)
+library(easystats) 
+library(modelr)
+library(broom)
+library(fitdistrplus)
+
+setwd('../../Data')
+Grad=read.csv('GradSchool_Admissions.csv')
+
+gpa_plot=Grad%>%
+  ggplot(aes(x=gpa,
+             y=admit))+
+  geom_jitter()+
+  geom_smooth(method = 'glm', se=F)+
+  facet_wrap(~rank)+
+  labs(title = 'Graph 1: GPA vs admitince')
+
+
+gre_plot=Grad%>%
+  ggplot(aes(x=gre,
+             y=admit))+
+  geom_jitter()+
+  geom_smooth(method = 'glm', se=F)+
+  facet_wrap(~rank)+
+  labs(title = 'Graph 2: GRE vs admitince')
+
+Grad2=Grad%>%
+  mutate(admit=factor(admit,
+                      levels=c(0,1),
+                      labels=c('Not Admitted', 'Admitted')))%>%
+  mutate(rank=factor(rank))
+  
+
+
+
+gpa2_plot=Grad2%>%
+  ggplot(aes(x=gpa,
+             y=admit))+
+ geom_boxplot()+
+  labs(title = 'Graph 3: GPA vs admitince Boxplot')
+
+
+gre2_plot=Grad2%>%
+  ggplot(aes(x=gre,
+             y=admit))+
+  geom_boxplot()+
+labs(title = 'Graph 4: GRE vs admitince Boxplot')
+
+(gre_plot+gpa_plot)/(gre2_plot+gpa2_plot)
+
+
+```
+
+Here are the different models that I tried out
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+mod1=glm(data=Grad2, admit~gre+gpa+rank, family=binomial)
+
+
+mod2=glm(data=Grad, admit~gre+gpa)
+
+
+mod3=glm(data=Grad, admit~gre+rank)
+
+
+mod4=glm(data=Grad, admit~gpa+rank)
+
+
+mod5=glm(data=Grad, admit~gre)
+
+
+mod6=glm(data=Grad, admit~gpa)
+
+
+mod7=glm(data=Grad, admit~rank)
+
+```
+
+
+Here is the comparison based off of their preformance
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+compare_performance(mod1,mod2,mod3,mod4,mod5,mod6,mod7)%>%
+  plot()
+
+```
+Finally here is the prediction results. It looks like that as you have a better GPA and GRE it will increase your chances of getting accepted into college. This is also supported by the models up above. model one showing that it is higher correlated.
+
+```{r echo=FALSE}
+
+Grad2$prediction=predict(mod1,Grad2)
+prediction_plot1=gather_predictions(Grad2, mod1)%>%
+  ggplot(aes(x=gpa,
+             y=prediction))+
+  geom_smooth(se=F)
+
+prediction_plot2=gather_predictions(Grad2, mod1)%>%
+  ggplot(aes(x=gre,
+             y=prediction))+
+  geom_smooth(se=F)
+
+prediction_plot1+prediction_plot2
+```
+

@@ -912,3 +912,126 @@ install.packages('devtools')
 library(devtools)
 devtools::install_github("nstrayer/datadrivencv")
 
+
+
+##########################################################################
+#catching up
+
+# https://mlu-explain.github.io/linear-regression/
+
+## build a model to predict cty 
+mpg=mpg
+glm(data = mpg,
+    formula = x + y + z + x:y + x*y)
+
+
+mpg
+
+mod1 = glm(data = mpg,
+           formula = displ + cyl)
+
+mod_h = glm(data = mpg,
+            formula = cty ~ displ + drv + cyl)
+
+mod_hm = glm(data = mpg,
+             formula = cty ~ displ + trans)
+
+summary(mod_hm)
+
+names(mpg)
+
+compare_models(mod1, mod_h, mod_hm)
+compare_performance(mod1, mod_h, mod_hm)
+
+compare_performance(mod1, mod_h, mod_hm) %>% plot()
+
+mod1 = glm(data = mpg, formula = cty ~ displ)
+mod2 = glm(data = mpg, formula = cty ~ displ + cyl)
+modi = glm(data = mpg, formula = cty ~ displ:cyl)
+modi2 = glm(data = mpg, formula = cty ~ displ*cyl)
+summary(modi2)
+
+summary(mod1)
+summary(mod2)
+
+
+# displ + cyl + displ:cyl = displ*cyl 
+# displ + cyl + trans + displ:cyl + displ:trans + ....= displ*cyl*trans 
+
+
+mod1 = glm(data = mpg, formula = cty ~ displ)
+mod2 = glm(data = mpg, formula = cty ~ displ + cyl)
+mod3 = glm(data = mpg, formula = cty ~ displ*cyl)
+
+summary(mod3)
+
+
+mpg %>% 
+  ggplot(aes(x = displ, y = cty)) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+
+mpg %>% 
+  ggplot(aes(x = displ, y = cty, color = factor(cyl))) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+
+mpg %>% 
+  ggplot(aes(x = displ, y = cty, color = cyl)) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+
+## cty = dipsl, cyl
+## build these three models (simple, additive, interaction)
+## predict the cty using each model
+
+mpg2 <- mpg
+
+mpg2$pred1 = predict(mod1, mpg2)
+plot(mpg2$cty, mpg2$pred1)
+
+cor.test(mpg$displ, mpg$cty)
+
+mpg2$pred2 = predict(mod2, mpg2)
+mpg2$pred3 = predict(mod3, mpg2)
+
+mpg2 %>% 
+  ggplot(aes(x = displ, y = pred1, color = factor(cyl))) +
+  geom_point()
+
+mpg2 %>% 
+  ggplot(aes(x = displ, y = pred2, color = factor(cyl))) +
+  geom_point()
+
+mpg2 %>% 
+  ggplot(aes(x = displ, y = pred3, color = factor(cyl))) +
+  geom_point()
+
+summary(mod2)
+
+summary(mod3)
+
+
+## plot three model together
+View(mpg2)
+
+mpg2 %>% 
+  pivot_longer(cols = c('pred1', 'pred2',..), names_to = 'model', values_to = 'prediction')
+
+mpg2 %>% 
+  pivot_longer(starts_with('pred')) %>% 
+  ggplot(aes(x = displ, y = value, color = factor(cyl))) +
+  geom_point() +
+  geom_smooth(method = 'glm') +
+  facet_wrap(~ name)
+
+
+mpg2 %>% 
+  pivot_longer(starts_with('pred')) %>% 
+  ggplot(aes(x = displ, y = cty, color = factor(cyl))) +
+  geom_point() +
+  geom_point(aes(y = value), color = 'black') +
+  facet_wrap(~ name)
